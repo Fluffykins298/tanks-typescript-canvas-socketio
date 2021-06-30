@@ -19,7 +19,7 @@ export class Game {
 
     private _idCounter: number = 1;
 
-    constructor(public isServer: boolean) {}
+    constructor(public isServer: boolean) { }
 
     public createState(): GameState {
         return {
@@ -128,6 +128,7 @@ export class Game {
             positionY: 0,
             velocityX: 0,
             velocityY: 0,
+            bounces: 0,
         });
         this.bullets.push(bullet);
         return bullet;

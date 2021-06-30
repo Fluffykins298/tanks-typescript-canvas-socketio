@@ -10,6 +10,7 @@ export interface BulletState {
     positionY: number;
     velocityX: number;
     velocityY: number;
+    bounces: number;
 }
 
 export class Bullet {
@@ -18,22 +19,31 @@ export class Bullet {
     public radius: number = 42;
     public damage: number = 0.22;
 
-    public constructor(private game: Game, public state: BulletState) {}
+    public constructor(private game: Game, public state: BulletState) { }
 
     public update(dt: number) {
+
         // Move bullet
         this.state.positionX += this.state.velocityX * dt;
         this.state.positionY += this.state.velocityY * dt;
 
+        if (this.state.positionX > this.game.arenaSize / 2) {
+            this.state.velocityX = -Math.abs(this.state.velocityX);
+            this._didbounce();
+        }
+        if (this.state.positionX < -this.game.arenaSize / 2) {
+            this.state.velocityX = Math.abs(this.state.velocityX);
+            this._didbounce();
+        }
+        if (this.state.positionY > this.game.arenaSize / 2) {
+            this.state.velocityY = -Math.abs(this.state.velocityY);
+            this._didbounce();
+        }
+        if (this.state.positionY < -this.game.arenaSize / 2) {
+            this.state.velocityY = Math.abs(this.state.velocityY);
+            this._didbounce();
+        }
         if (this.game.isServer) {
-            // Check if collided with border
-            if (
-                Math.abs(this.state.positionX) > this.game.arenaSize / 2 ||
-                Math.abs(this.state.positionY) > this.game.arenaSize / 2
-            ) {
-                this.game.removeBullet(this.state.id);
-            }
-
             // Check if collided with another player
             for (let player of this.game.players) {
                 if (
@@ -62,7 +72,7 @@ export class Bullet {
         ctx.save();
         ctx.rotate(
             Math.atan2(-this.state.velocityY, this.state.velocityX) +
-                Math.PI / 2
+            Math.PI / 2
         );
         let bulletWidth =
             client.assets.bullet.width * client.assets.scaleFactor;
@@ -84,4 +94,13 @@ export class Bullet {
         player.damage(this.damage, this.state.shooterId);
         this.game.removeBullet(this.state.id);
     }
+    private _didbounce() {
+        this.state.bounces += 1;
+        if (this.game.isServer && this.state.bounces > 1) {
+            this.game.removeBullet(this.state.id);
+
+        }
+    }
+
+
 }
