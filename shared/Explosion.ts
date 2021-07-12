@@ -9,7 +9,6 @@ export interface ExplosionState extends EntityState {
     id: number;
     positionX: number;
     positionY: number;
-    
 }
 
 const EXPLOSION_RADIUS: number = 24;
@@ -23,24 +22,30 @@ export function createExplosion(
         id: generateId(game),
         positionX: positionX,
         positionY: positionY,
-        
     };
     game.state.explosions[state.id] = state;
     return state;
 }
 
-export function updateExplosion(game: Game, state: ExplosionState, dt: number) {}
+export function updateExplosion(
+    game: Game,
+    state: ExplosionState,
+    dt: number
+) {}
 
 export function renderExplosion(
     client: Client,
     state: ExplosionState,
     ctx: CanvasRenderingContext2D
 ) {
-    // Draw bullet
     ctx.save();
+
     ctx.translate(state.positionX, -state.positionY);
-    let explosionWidth = client.assets.explosion.width * client.assets.scaleFactor;
-    let explosionHeight = client.assets.explosion.height * client.assets.scaleFactor;
+
+    let explosionWidth =
+        client.assets.explosion.width * client.assets.scaleFactor;
+    let explosionHeight =
+        client.assets.explosion.height * client.assets.scaleFactor;
     ctx.drawImage(
         client.assets.explosion,
         -explosionWidth / 2,
@@ -48,6 +53,6 @@ export function renderExplosion(
         explosionWidth,
         explosionHeight
     );
+
     ctx.restore();
 }
-
