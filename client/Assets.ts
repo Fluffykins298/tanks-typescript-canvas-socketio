@@ -18,6 +18,7 @@ export class Assets {
     public bullet = this._load(bulletUrl);
     public wall = this._load(wallUrl);
     public barrel = this._load(barrelUrl);
+    explosion: any;
 
     private _load(url: string): HTMLImageElement {
         let img = new Image();
