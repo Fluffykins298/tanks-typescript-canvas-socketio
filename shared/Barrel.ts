@@ -1,6 +1,7 @@
 import { Client } from "../client/Client";
 import { BulletState, BULLET_RADIUS } from "./Bullet";
 import { EntityState } from "./Entity";
+import { createExplosion } from "./Explosion";
 import { Game, generateId } from "./Game";
 import { checkCircleCollision } from "./Physics";
 import { PlayerState, PLAYER_RADIUS } from "./Player";
@@ -103,6 +104,7 @@ function onBulletCollision(
         state.health -= 1;
         if (state.health <= 0) {
             delete game.state.barrels[state.id];
+            createExplosion(game, state.positionX, state.positionY)
         }
     }
 }
