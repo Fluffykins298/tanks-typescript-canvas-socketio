@@ -13,6 +13,7 @@ export interface PlayerState extends EntityState {
     moveY: number;
     health: number;
     score: number;
+    shootTimer: number;
 }
 
 export const PLAYER_MOVE_SPEED: number = 500;
@@ -37,6 +38,7 @@ export function createPlayer(game: Game): PlayerState {
         moveY: 0,
         health: 1,
         score: 0,
+        shootTimer: 0,
     };
     game.state.players[state.id] = state;
     return state;
@@ -44,6 +46,7 @@ export function createPlayer(game: Game): PlayerState {
 
 export function updatePlayer(game: Game, state: PlayerState, dt: number) {
     // Move the player based on the move input
+    state.shootTimer -= dt;
     state.positionX += state.moveX * PLAYER_MOVE_SPEED * dt;
     state.positionY += state.moveY * PLAYER_MOVE_SPEED * dt;
 
@@ -142,19 +145,16 @@ export function renderPlayer(
     ctx.restore();
 }
 
-export function shoot(game: Game, state: PlayerState): BulletState {
-    let dirX = Math.cos(state.aimDir);
-    let dirY = -Math.sin(state.aimDir);
+export function shoot(game: Game, state: PlayerState) {
+    if (state.shootTimer < 0) {
+        state.shootTimer = 2;
+        let dirX = Math.cos(state.aimDir);
+        let dirY = -Math.sin(state.aimDir);
 
-    let bulletX = state.positionX + dirX * BARREL_LENGTH;
-    let bulletY = state.positionY + dirY * BARREL_LENGTH;
-    return createBullet(
-        game,
-        state.id,
-        bulletX,
-        bulletY,
-        Math.atan2(dirY, dirX)
-    );
+        let bulletX = state.positionX + dirX * BARREL_LENGTH;
+        let bulletY = state.positionY + dirY * BARREL_LENGTH;
+        createBullet(game, state.id, bulletX, bulletY, Math.atan2(dirY, dirX));
+    }
 }
 
 export function damagePlayer(
